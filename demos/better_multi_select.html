@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="UTF-8" />
+    <title>Better Select UI</title>
+    <link rel="stylesheet" type="text/css" href="../UI-Components/better_multi_select.css" />
+    </head>
+    <body>
+    <form id="testform">
+    <div id="selectContainer">
+    </div>
+    </form>
+    <button onclick="alert(JSON.stringify(jQuery('#testform').serializeObject()));">Submit</button>
+    <script src="../lib/jquery.js"></script>
+    <script src="../UI-Components/better_multi_select.js"></script>
+    <script src="../lib/jquery.serializeObject.js"></script>
+    <script>
+    jQuery.noConflict();
+    jQuery(document).ready(function() {
+        var options = [
+            {
+                val: 1,
+                text: "One"
+            },
+            {
+                val: 2,
+                text: "Two"
+            }
+        ];
+        BetterMultiSelect.newInstance("selectContainer","select_val_1","selector1",options);
+        BetterMultiSelect.setSelected("select_val_1",['1']);
+    });
+    </script>
+    </body>
+</html>
