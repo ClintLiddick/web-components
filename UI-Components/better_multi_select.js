@@ -142,9 +142,8 @@ var BetterMultiSelect = (function($){
                 var indexToDelete = hiddenSel.children(':selected').index(eleToDelete);
                 selectedVals.splice(indexToDelete,1);
                 hiddenSel.val(selectedVals);
-                hiddenSel.change();
             });
-            // valsToDelete.remove();
+            hiddenSel.change();
         });
     }
 
