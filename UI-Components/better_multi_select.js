@@ -1,28 +1,33 @@
 /**
  *
  */
-
-
 var BetterMultiSelect = (function($){
 
-
-    // TODO replace strings with jQuery objects?
-    var newInstance = function(containerId,selectorName,selectId,options) {
+    /**
+     * Creates an instance of BetterMultiSelect
+     *
+     * @param  {String} containerId  id of the node to append to
+     * @param  {String} selectorName name to use for the form element
+     * @param  {Object[]} options    array of {"val":"", "text":""} for select options
+     */
+    var newInstance = function(containerId,selectorName,options) {
         var html = "<div class='betterSelect_div'>";
         html += generateHiddenSelect(selectorName,options);
-        html += generateVisibleSelector(selectId,options);
+        html += generateVisibleSelector(options);
         html += generateVisibleList();
         html += generateDeleteButton();
         html += "</div>";
 
         $('#' + containerId).append(html);
-        initHandlers(containerId);
+        initEventHandlers(containerId);
     };
 
+
     /**
-     * [setSelected description]
-     * @param {String} selectorName is the name/id attribute given to the hidden value selector
-     * @param {String[]} options is an array of option value strings to set as selected
+     * Sets the currently selected options of the form element
+     *
+     * @param {String} selectorName the name/id of the form element
+     * @param {String[]} options    an array of option value strings to set as selected
      */
     var setSelected = function(selectorName,options) {
         var hiddenSel = $('#'+selectorName);
@@ -30,6 +35,12 @@ var BetterMultiSelect = (function($){
         hiddenSel.change();
     };
 
+
+    /**
+     * @param  {String}   selectorName name of form element
+     * @param  {String[]} options      array of {"val":"", "text":""} for select options
+     * @return {String}                HTML for hidden <select> form element
+     */
     function generateHiddenSelect(selectorName,options) {
         var html = "<select id='" + selectorName + "' name='" + selectorName + "' class='betterSelect_hidden' multiple='multiple'>";
         $.each(options, function(i,obj){
@@ -40,8 +51,13 @@ var BetterMultiSelect = (function($){
         return html;
     }
 
-    function generateVisibleSelector(selectId,options) {
-        var html = "<select id='" + selectId + "' class='betterSelect_selector'>";
+
+    /**
+     * @param  {String} options array of {"val":"", "text":""} for select options
+     * @return {String}         HTML for dropdown selector
+     */
+    function generateVisibleSelector(options) {
+        var html = "<select class='betterSelect_selector'>";
         html += "<option value='' class='betterSelect_option'>Please Select</option>";
         $.each(options, function(i,obj){
             html += "<option value='" + obj.val + "' class='betterSelect_option'>" + obj.text + "</option>";
@@ -51,22 +67,39 @@ var BetterMultiSelect = (function($){
         return html;
     }
 
+
+    /**
+     * @return {String} HTML for visible "selected" list
+     */
     function generateVisibleList() {
         return "<div class='betterSelect_list'><ul></ul></div>";
     }
 
+
+    /**
+     * @return {String} HTML for delete button
+     */
     function generateDeleteButton() {
         return "<button class='betterSelect_del'>Remove Selected</button>";
     }
 
 
-    function initHandlers(containerId) {
+    /**
+     * Initializes all necessary event handlers for BetterMultiSelect widget
+     *
+     * @param  {String} containerId id of container contianing BetterMultiSelect form element
+     */
+    function initEventHandlers(containerId) {
+
+        // Handler for dropdown selector
+        // Adds a single value to the hidden <select> form element
         $('#' + containerId).on('change','.betterSelect_selector', function(e) {
             var visibleSel = $(this);
             var hiddenSel = $(visibleSel.siblings('.betterSelect_hidden')[0]);
             var newSelectedVal = visibleSel.val();
             var selectedVals = hiddenSel.val();
             if (selectedVals) {
+                // if not already selected
                 if (selectedVals.indexOf(newSelectedVal) <= -1) {
                     selectedVals.push(newSelectedVal);
                     hiddenSel.val(selectedVals);
@@ -80,6 +113,8 @@ var BetterMultiSelect = (function($){
             visibleSel.val('');
         });
 
+        // Handler for hidden <select> form element
+        // Updates the visible "selected" list to match current selections
         $('#' + containerId).on('change', '.betterSelect_hidden', function(e) {
             var hiddenSel = $(this);
             var visibleList = hiddenSel.siblings('.betterSelect_list').first().children('ul').first();
@@ -89,15 +124,18 @@ var BetterMultiSelect = (function($){
             });
         });
 
+        // Handler for "selected" list items
         $('#' + containerId).on('click', 'li', function(e) {
-            $(this).toggleClass('selected');
+            $(this).toggleClass('betterSelect_liSelected');
         });
 
+        // Handler for delete selected button
+        // Uses the text of the visible selected list to remove hidden selected values
         $('#' + containerId).on('click', '.betterSelect_del', function(e) {
             e.preventDefault();
             var hiddenSel = $(this).siblings('.betterSelect_hidden').first();
             var visibleList = $(this).siblings('.betterSelect_list').first().children('ul').first();
-            var valsToDelete = visibleList.children('.selected');
+            var valsToDelete = visibleList.children('.betterSelect_liSelected');
             $.each(valsToDelete, function(i,liEle){
                 var selectedVals = hiddenSel.val();
                 var eleToDelete = hiddenSel.children(':contains('+$(liEle).text()+')').first();

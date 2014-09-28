@@ -41,7 +41,7 @@
     padding: .1em .5em;
 }
 
-.betterSelect_list li.selected {
+.betterSelect_list li.betterSelect_liSelected {
     background: #F0F0F0;
 }
 
