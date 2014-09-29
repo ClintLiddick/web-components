@@ -13,7 +13,8 @@
     <button onclick="alert(JSON.stringify(jQuery('#testform').serializeObject()));">Submit</button>
     <script src="../lib/jquery.js"></script>
     <script src="../UI-Components/better_multi_select.js"></script>
-    <script src="../lib/jquery.serializeObject.js"></script>
+    <!-- <script src="../lib/jquery.serializeObject.js"></script> -->
+    <script src="../lib/jquery.are-you-sure.js"></script>
     <script>
     jQuery.noConflict();
     jQuery(document).ready(function() {
@@ -29,6 +30,7 @@
         ];
         BetterMultiSelect.newInstance("selectContainer","select_val_1",options);
         BetterMultiSelect.setSelected("select_val_1",['1']);
+        jQuery('#testform').areYouSure();
     });
     </script>
     </body>
